@@ -10,10 +10,13 @@ import DishSheet from "./dish-sheet"; // Import DishSheet
 
 // Temporary placeholder for useCart until CartContext is fully implemented
 const useCart = () => ({
-  addToCart: (item: any) => console.log("Add to cart (temp):", item),
+  addToCart: (item: Dish & { quantity: number }) => console.log("Add to cart (temp):", item),
   updateQuantity: (itemId: string, quantity: number) => console.log("Update quantity (temp):", itemId, quantity),
   removeFromCart: (itemId: string) => console.log("Remove from cart (temp):", itemId),
-  getItemQuantity: (itemId: string) => 0, // Dummy quantity
+  getItemQuantity: (itemId: string) => {
+    console.log("getItemQuantity (temp):", itemId); // Use itemId to avoid unused var
+    return 0; 
+  },
 });
 
 // interface Dish { // Re-defining here or importing from a shared types file later

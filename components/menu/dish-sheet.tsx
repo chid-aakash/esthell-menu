@@ -30,6 +30,30 @@ export default function DishSheet({ dish, isOpen, onOpenChange }: DishSheetProps
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
+  // Calculate dishImages and validDishImages safely, even if dish is null initially
+  const dishImages = dish?.images?.length ? dish.images : (dish?.imageUrl ? [dish.imageUrl] : []);
+  const validDishImages = dishImages.map(img => img || "/images/placeholder-dish.jpg");
+
+  useLayoutEffect(() => {
+    // This effect should only run if the sheet is open and the refs are available
+    // and dish is present to calculate constraints for its images.
+    if (isOpen && dish && carouselRef.current && imageContainerRef.current) {
+      const containerWidth = imageContainerRef.current.offsetWidth;
+      if (validDishImages.length > 1) {
+        const totalImagesWidth = containerWidth * validDishImages.length;
+        setDragConstraintLeft(-(totalImagesWidth - containerWidth));
+      } else {
+        setDragConstraintLeft(0); // No dragging if only one or zero images
+      }
+    } else {
+      setDragConstraintLeft(0); // Reset if not open or no dish
+    }
+    // Dependencies: isOpen ensures recalculation when sheet opens/closes.
+    // dish.id (or another stable part of dish) to recalculate if the dish itself changes.
+    // validDishImages.length to recalculate if the number of images changes for the same dish (though less likely).
+  }, [isOpen, dish, validDishImages.length]); 
+  // Note: validDishImages.length depends on `dish` as well.
+
   if (!dish) {
     return null;
   }
@@ -39,19 +63,6 @@ export default function DishSheet({ dish, isOpen, onOpenChange }: DishSheetProps
     onOpenChange(false);
     setNotes("");
   };
-
-  const dishImages = dish.images?.length ? dish.images : [dish.imageUrl];
-  const validDishImages = dishImages.map(img => img || "/images/placeholder-dish.jpg");
-
-  useLayoutEffect(() => {
-    if (carouselRef.current && imageContainerRef.current && validDishImages.length > 1) {
-      const containerWidth = imageContainerRef.current.offsetWidth;
-      const totalImagesWidth = containerWidth * validDishImages.length;
-      setDragConstraintLeft(-(totalImagesWidth - containerWidth));
-    } else {
-      setDragConstraintLeft(0);
-    }
-  }, [validDishImages.length, isOpen]);
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => { onOpenChange(open); if (!open) setNotes("");}}>

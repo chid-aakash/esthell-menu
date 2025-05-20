@@ -1,19 +1,25 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import type { Dish } from "@/types/menu"; // Import Dish for CartItem
 
-// Define a type for your cart item if you have one, e.g.
-// type CartItem = { id: string; name: string; quantity: number; price: number; };
-// type CartContextType = {
-//   cartItems: CartItem[];
-//   addToCart: (item: CartItem) => void;
-//   removeFromCart: (itemId: string) => void;
-//   updateQuantity: (itemId: string, quantity: number) => void;
-// };
+// Define a type for your cart item
+export interface CartItem extends Dish {
+  quantity: number;
+  notes?: string; // Optional notes from DishSheet
+}
 
-// For now, a simple context
-// const CartContext = createContext<CartContextType | undefined>(undefined);
-const CartContext = createContext<any | undefined>(undefined); // Using any for now
+// Define the context type
+interface CartContextType {
+  cartItems: CartItem[];
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (itemId: string) => void;
+  updateQuantity: (itemId: string, quantity: number) => void;
+  getItemQuantity: (itemId: string) => number;
+  // Add other cart actions here: clearCart, etc.
+}
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function useCart() {
   const context = useContext(CartContext);
@@ -26,28 +32,36 @@ export function useCart() {
 export default function CartProvider({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  // Replace with actual cart state and logic
-  const [cartItems, setCartItems] = useState([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Dummy functions, to be implemented later
-  const addToCart = (item: any) => {
+  // Dummy functions, to be implemented in Step 5.2
+  const addToCart = (item: CartItem) => {
     console.log("addToCart (dummy)", item);
-    // setCartItems(prevItems => [...prevItems, item]); // Example
+    // Example: setCartItems(prevItems => [...prevItems, item]);
   };
   const removeFromCart = (itemId: string) => {
     console.log("removeFromCart (dummy)", itemId);
-    // setCartItems(prevItems => prevItems.filter(item => item.id !== itemId)); // Example
+    // Example: setCartItems(prevItems => prevItems.filter(i => i.id !== itemId));
   };
   const updateQuantity = (itemId: string, quantity: number) => {
     console.log("updateQuantity (dummy)", itemId, quantity);
-    // setCartItems(prevItems => prevItems.map(item => item.id === itemId ? {...item, quantity} : item)); // Example
+    // Example: setCartItems(prevItems => prevItems.map(i => i.id === itemId ? {...i, quantity} : i));
+  };
+  const getItemQuantity = (itemId: string) => {
+    const item = cartItems.find(i => i.id === itemId);
+    return item ? item.quantity : 0;
   };
 
-
-  // const value = { cartItems, addToCart, removeFromCart, updateQuantity };
-  const value = { cartItems, addToCart, removeFromCart, updateQuantity }; // Using any for now
+  const value = {
+    cartItems,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    getItemQuantity,
+  };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 } 

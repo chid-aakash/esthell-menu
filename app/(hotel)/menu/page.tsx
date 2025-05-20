@@ -6,7 +6,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import DishCard from "@/components/menu/dish-card";
-import type { Dish, Category, MenuData } from "@/types/menu"; // Import centralized types
+import type { MenuData } from "@/types/menu";
 
 async function fetchMenu(): Promise<MenuData> {
   const res = await fetch("/menu.dummy.json");
@@ -26,19 +26,17 @@ export default function MenuPage() {
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   useEffect(() => {
-    // Select the first category by default if menuData is available
     if (menuData?.categories && menuData.categories.length > 0 && !selectedCategoryId) {
       setSelectedCategoryId(menuData.categories[0].id);
     }
   }, [menuData, selectedCategoryId]);
 
   useEffect(() => {
-    // Scroll to active tab
     if (selectedCategoryId && tabRefs.current[selectedCategoryId]) {
       tabRefs.current[selectedCategoryId]?.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
-        inline: "center", // Try to center the tab
+        inline: "center",
       });
     }
   }, [selectedCategoryId]);
@@ -47,7 +45,6 @@ export default function MenuPage() {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-150px)]">
         <p className="text-xl">Loading menu...</p>
-        {/* TODO: Add a nice spinner/skeleton loader */}
       </div>
     );
   }
