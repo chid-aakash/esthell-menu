@@ -1,0 +1,62 @@
+{
+  "categories": [
+    {
+      "id": "cat_starters",
+      "name": "Starters",
+      "dishes": [
+        {
+          "id": "dish_soup",
+          "name": "Tomato Soup",
+          "description": "Classic creamy tomato soup.",
+          "price": 150,
+          "cookTimeMinutes": 15,
+          "imageUrl": "/images/placeholder-dish.jpg"
+        },
+        {
+          "id": "dish_veg_spring_roll",
+          "name": "Veg Spring Roll",
+          "description": "Crispy fried rolls with vegetable filling.",
+          "price": 180,
+          "cookTimeMinutes": 20,
+          "imageUrl": "/images/placeholder-dish.jpg"
+        }
+      ]
+    },
+    {
+      "id": "cat_main_course",
+      "name": "Main Course",
+      "dishes": [
+        {
+          "id": "dish_paneer_butter_masala",
+          "name": "Paneer Butter Masala",
+          "description": "Rich and creamy dish of paneer in a tomato, butter and cashew sauce.",
+          "price": 350,
+          "cookTimeMinutes": 30,
+          "imageUrl": "/images/placeholder-dish.jpg"
+        },
+        {
+          "id": "dish_dal_makhani",
+          "name": "Dal Makhani",
+          "description": "Creamy and buttery lentil dish.",
+          "price": 300,
+          "cookTimeMinutes": 35,
+          "imageUrl": "/images/placeholder-dish.jpg"
+        }
+      ]
+    },
+    {
+      "id": "cat_desserts",
+      "name": "Desserts",
+      "dishes": [
+        {
+          "id": "dish_gulab_jamun",
+          "name": "Gulab Jamun",
+          "description": "Soft delicious berry sized balls made with milk solids, flour & a leavening agent.",
+          "price": 120,
+          "cookTimeMinutes": 10,
+          "imageUrl": "/images/placeholder-dish.jpg"
+        }
+      ]
+    }
+  ]
+} 
