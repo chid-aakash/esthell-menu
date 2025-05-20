@@ -6,26 +6,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import DishCard from "@/components/menu/dish-card";
-
-// Define interfaces for the menu data structure
-interface Dish {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  cookTimeMinutes: number;
-  imageUrl: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  dishes: Dish[];
-}
-
-interface MenuData {
-  categories: Category[];
-}
+import type { Dish, Category, MenuData } from "@/types/menu"; // Import centralized types
 
 async function fetchMenu(): Promise<MenuData> {
   const res = await fetch("/menu.dummy.json");
