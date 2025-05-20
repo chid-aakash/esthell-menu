@@ -1,37 +1,99 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, PackageSearch, ChefHat, Truck, PartyPopper } from 'lucide-react';
+
+// Define a type for the SSE event data
+interface OrderStatusEvent {
+  orderId: string;
+  status: string;
+  timestamp: string;
+}
+
+const statusIcons: { [key: string]: React.ElementType } = {
+  "Placed": PackageSearch,
+  "Cooking": ChefHat,
+  "On the way": Truck,
+  "Delivered": PartyPopper,
+};
+
+const statusMessages: { [key: string]: string } = {
+  "Placed": "Your order has been placed and is awaiting confirmation.",
+  "Cooking": "The kitchen has started preparing your order.",
+  "On the way": "Your order is on its way to your room!",
+  "Delivered": "Your order has been delivered. Enjoy your meal!",
+};
 
 export default function OrderStatusPage() {
   const params = useParams();
   const searchParams = useSearchParams();
 
-  const orderId = params.id;
+  const orderId = params.id as string;
   const roomId = searchParams.get('r');
+
+  const [currentStatus, setCurrentStatus] = useState<string>("Placed");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!orderId) return;
+
+    const eventSourceUrl = `/api/orders/stream?orderId=${orderId}${roomId ? `&roomId=${roomId}` : ''}`;
+    const eventSource = new EventSource(eventSourceUrl);
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data: OrderStatusEvent = JSON.parse(event.data);
+        if (data.orderId === orderId) {
+          setCurrentStatus(data.status);
+          if (data.status === "Delivered") {
+            eventSource.close();
+          }
+        }
+      } catch (e) {
+        console.error("Failed to parse SSE event data:", e);
+        setError("Error receiving status updates.");
+      }
+    };
+
+    eventSource.onerror = (err) => {
+      console.error("EventSource failed:", err);
+      setError("Connection to status updates failed. Please refresh.");
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [orderId, roomId]);
+
+  const CurrentIcon = statusIcons[currentStatus] || CheckCircle2;
+  const statusMessage = statusMessages[currentStatus] || "Your order is being processed.";
 
   return (
     <div className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center text-center p-6">
-      <CheckCircle2 className="w-20 h-20 text-green-500 mb-6" />
-      <h1 className="text-3xl font-bold mb-3">Order Placed Successfully!</h1>
-      <p className="text-lg text-muted-foreground mb-2">Thank you for your order.</p>
-      <p className="text-md text-muted-foreground mb-1">Order ID: <span className="font-semibold text-primary">{typeof orderId === 'string' ? orderId : JSON.stringify(orderId)}</span></p>
-      {roomId && (
-        <p className="text-md text-muted-foreground mb-6">Room Number: <span className="font-semibold text-primary">{roomId}</span></p>
+      <CurrentIcon className={`w-20 h-20 mb-6 ${currentStatus === 'Delivered' ? 'text-green-500' : 'text-brand-primary'}`} />
+      
+      <h1 className="text-3xl font-bold mb-3">Order Status: {currentStatus}</h1>
+      <p className="text-lg text-muted-foreground mb-4">{statusMessage}</p>
+      
+      <div className="bg-muted/50 p-4 rounded-lg shadow-sm mb-6 w-full max-w-md">
+        <p className="text-md text-foreground mb-1">Order ID: <span className="font-semibold text-brand-primary">{orderId}</span></p>
+        {roomId && (
+          <p className="text-md text-foreground">Room Number: <span className="font-semibold text-brand-primary">{roomId}</span></p>
+        )}
+      </div>
+
+      {error && (
+        <p className="text-red-500 mb-4">Error: {error}</p>
       )}
-      <p className="mb-8">Your order is being processed and you will receive updates soon.</p>
       
       <div className="flex space-x-4">
         <Link href={roomId ? `/menu?r=${roomId}` : "/menu"}>
           <Button variant="outline">Back to Menu</Button>
         </Link>
-        {/* Later, a link to track this specific order in more detail via SSE (Step 6) */}
-        {/* <Link href={`/orders/${orderId}/track${roomId ? `?r=${roomId}` : ""}`}>
-          <Button>Track Your Order</Button>
-        </Link> */}
       </div>
     </div>
   );
