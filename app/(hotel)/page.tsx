@@ -1,4 +1,6 @@
 import React from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -20,10 +22,17 @@ export default function HomePage() {
       
       {/* Content Container */}
       <div className="relative z-10 flex flex-col items-center justify-center p-8 text-center">
-        <h1 className="text-4xl font-bold text-white mb-8 drop-shadow-md">
+        <h1 className="text-4xl font-bold text-white mb-12 drop-shadow-md">
           Welcome to Esthell
         </h1>
-        {/* Buttons from Step 2.2 will go here */}
+        <div className="flex space-x-6">
+          <Button asChild size="lg" className="bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 text-white shadow-lg transition-all duration-300">
+            <Link href="/menu">View Menu</Link>
+          </Button>
+          <Button variant="outline" size="lg" disabled className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white/70 shadow-lg opacity-70 cursor-not-allowed">
+            Room Service
+          </Button>
+        </div>
       </div>
     </div>
   );
