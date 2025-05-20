@@ -4,6 +4,11 @@ import QueryProvider from "@/components/providers/query-provider";
 import CartProvider from "@/components/providers/cart-provider";
 import Header from "@/components/layout/header";
 
+export const metadata = {
+  manifest: "/manifest.json",
+  themeColor: "#003C71",
+};
+
 export default function HotelLayout({
   children,
 }: {
