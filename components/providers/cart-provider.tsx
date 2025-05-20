@@ -17,6 +17,7 @@ interface CartContextType {
   updateQuantity: (itemId: string, quantity: number) => void;
   getItemQuantity: (itemId: string) => number;
   getCartTotal: () => number;
+  clearCart: () => void; // Added clearCart to type
   // Add other cart actions here: clearCart, etc.
 }
 
@@ -79,6 +80,10 @@ export default function CartProvider({
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  const clearCart = () => {
+    setCartItems([]); // Implementation for clearCart
+  };
+
   const value = {
     cartItems,
     addToCart,
@@ -86,6 +91,7 @@ export default function CartProvider({
     updateQuantity,
     getItemQuantity,
     getCartTotal,
+    clearCart, // Added clearCart to context value
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

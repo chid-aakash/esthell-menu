@@ -15,7 +15,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { MinusCircle, PlusCircle, Trash2, ShoppingBag, Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface CartDrawerProps {
   children: React.ReactNode;
@@ -24,9 +24,10 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
-  const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
   const total = getCartTotal();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -51,8 +52,9 @@ export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
           throw new Error(result.message || "Failed to place order.");
         }
 
-        console.log("Order placed successfully:", result.orderId);
+        clearCart();
         onOpenChange(false);
+        router.push(`/orders/${result.orderId}${roomId ? `?r=${roomId}` : ""}`);
 
       } catch (err) {
         console.error("Order confirmation error:", err);
