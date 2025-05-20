@@ -1,0 +1,64 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## Project Status: Esthell Menu App
+
+**Objective**: Develop a progressive web application for Esthell Hotel guests to browse the menu, place orders, and track them in real-time.
+
+**Current Phase**: Home Page (Step 2)
+
+**Completed Steps**:
+- **Step 0: Project Bootstrap**
+    - 0.1: Initialized Next.js project (now at workspace root) with TypeScript, Tailwind CSS, ESLint.
+    - 0.2: Added core dependencies: `@tanstack/react-query`, `framer-motion`, `lucide-react`, `shadcn-ui`.
+    - 0.3: Set up `shadcn-ui` (manually configured `components.json`, `tailwind.config.ts`, and `globals.css` due to pnpm environment issues). Dependencies (`class-variance-authority`, `clsx`, `tailwind-merge`, `tailwindcss-animate`) installed.
+    - 0.4: Absolute imports (`@/*`) configured in `tsconfig.json`.
+- **Step 1: Core Layout**
+    - 1.1: Created `app/(hotel)/layout.tsx` with `<QueryProvider>` & `<CartProvider>`.
+    - 1.2: Added `<Header>` component (`components/layout/header.tsx`) with logo placeholder and dynamic `roomId` from `searchParams.r` (using `useSearchParams` and `<Suspense>`).
+    - 1.3: Defined global Tailwind theme colors in `tailwind.config.ts`: `brand-primary` (#003C71), `brand-accent` (#FFD34E), and their foregrounds. Header styled with these colors.
+
+**Codebase Structure** (All paths relative to workspace root `/Users/aakashchid/workshop/esthell-menu`):
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS v4
+- `shadcn-ui` for UI components (style: "new-york", base color: "neutral")
+- Key directories:
+    - `app/`: Main application code.
+        - `app/(hotel)/layout.tsx`: Core layout for hotel-specific pages.
+    - `components/`: Reusable UI components.
+        - `components/layout/header.tsx`: Application header.
+        - `components/providers/`: Context providers (`QueryProvider`, `CartProvider`).
+        - `components/ui/`: Shadcn-ui components.
+    - `lib/`: Utility functions (alias: `@/lib`).
+        - `lib/utils.ts`: Expected location for `cn()` utility from shadcn.
+    - `public/`: Static assets.
+- `pnpm` is the package manager (accessed via `npx pnpm` in the current environment).
+
+**Upcoming Tasks**:
+- **Step 2: Home page (`app/page.tsx`)**
+    - 2.1: Full-screen hero div with background gradient.
+    - 2.2: Two `<Button>` components side-by-side: "Menu" → `/menu`, "Room Service" (disabled).
+    - 2.3: Animate buttons with Framer's `whileHover` scale.
+
+**Key Files & Configuration** (All paths relative to workspace root):
+- `package.json`: Project dependencies.
+- `tsconfig.json`: TypeScript configuration, including path aliases.
+- `tailwind.config.ts`: Tailwind CSS configuration (includes `tailwindcss-animate`).
+- `app/globals.css`: Global styles and shadcn CSS variables.
+- `components.json`: Shadcn UI configuration.
+- `app/(hotel)/layout.tsx`: Wraps content with providers and includes the `Header`.
+- `components/layout/header.tsx`: Displays logo and room ID.
+
+**Visual/UX Notes (as per roadmap)**:
+- Home: Full-bleed hero, logo, room #, glass-morphism buttons.
+- Menu: Sticky category tabs, dish cards (image, name, price, cook-time, +/- controls).
+- Item Modal: Bottom sheet, image carousel, details, notes, add-to-cart.
+- Cart: Slide-in panel, item list, subtotal, confirm CTA.
+- Order Tracker: Stepper (Placed → Cooking → On the way → Delivered) with SSE updates.
+
+**Potential Issues/Notes**:
+- `pnpm` is not globally available in the execution environment. Commands requiring `pnpm` need to be prefixed with `npx`.
+- `shadcn-cli init` could not run `pnpm` automatically; setup was completed manually. This might affect adding new shadcn components later (may require manual file creation or careful use of the CLI if it tries to run `pnpm`).

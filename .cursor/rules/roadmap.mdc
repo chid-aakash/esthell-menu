@@ -1,0 +1,94 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Follow the hierarchy order.
+
+Take full ownership, donot wait for a human approval within a step. if you have to find a way to solve issues. do it by yourself. run internal terminals; see errors; debug recursively. GET SHIT DONE!
+
+Never skip a parent step. STOP between getting each step done.
+
+When a step is complete, run tests/lint before moving on.
+
+Commit after every leaf step (git commit -m "step X.Y done").
+
+Use TypeScript strict mode everywhere.
+
+Keep styling in app/globals.css or local CSS modules; no inline styles except Tailwind classes.
+
+
+
+0 Project bootstrap (10 min)
+0.1 Init repo, pnpm create next-app esthell-food --ts --tailwind --eslint
+0.2 cd esthell-food && pnpm add @tanstack/react-query framer-motion lucide-react shadcn-ui
+0.3 Set up shadcn (npx shadcn-ui@latest init)
+0.4 Add “absolute imports” in tsconfig.json (@/components, @/lib)
+
+1 Core layout
+1.1 Create app/(hotel)/layout.tsx – includes <QueryProvider> & <CartProvider>
+1.2 Add <Header> with logo + dynamic roomId coming from searchParams.r
+1.3 Global Tailwind theme (brand colours: #003C71, #FFD34E)
+
+2 Home page (app/page.tsx)
+2.1 Full-screen hero div with background gradient
+2.2 Two <Button> components side-by-side: “Menu” → /menu, “Room Service” (disabled)
+2.3 Animate buttons with Framer’s whileHover scale
+
+3 Menu flow
+3.1 app/menu/page.tsx – fetch menu via React-Query (/menu.dummy.json)
+3.2 Render horizontal cat-tabs (<ScrollArea>) – auto-scroll into view on tab click
+3.3 <DishCard> inside responsive grid, each with +/– controls updating CartContext
+
+4 Dish modal
+4.1 Create <DishSheet> using shadcn <Sheet> (position="bottom")
+4.2 Inside sheet: carousel (<Image> list + Framer drag), description, cook-time chip, textarea for notes, add-to-cart button
+
+5 Cart & checkout
+5.1 <CartDrawer> toggled from navbar icon (badge with item count)
+5.2 Map items, allow qty adjust & remove
+5.3 ConfirmOrder button → POST /api/mock-order (local route handler)
+5.4 On success push to /orders/:id
+
+6 Order tracker
+6.1 app/orders/[id]/page.tsx – subscribe to SSE /orders/stream with roomId filter
+6.2 Stepper component (<ul className="relative">) ticks completed stages
+6.3 If status==delivered, show confetti animation (react-dom-confetti)
+
+7 QR code handling
+7.1 middleware.ts – if path is / and ?r missing, redirect to “Invalid QR” page
+7.2 For local testing create pages/dev-qr.tsx that renders sample QRs
+
+8 A11y & PWA polish
+8.1 Add web-manifest, icons, theme-color
+8.2 next-pwa plugin for offline caching (only static assets)
+8.3 Keyboard nav & aria-labels on all buttons
+
+9 Styling & animation pass
+9.1 Add subtle fade-in on page load (AnimatePresence)
+9.2 Cart drawer spring transition (type:"spring", stiffness:260)
+9.3 Hover shadow on dish cards
+
+10 Testing & lint
+10.1 Run pnpm dlx playwright install → write 2 e2e tests (open menu, add item)
+10.2 Fix any eslint --fix issues
+
+11 Deploy & hand-off
+11.1 Push to GitHub, connect to Vercel ⇒ production URL
+11.2 Write a 1-page hand-off MD: env variables (MENU_API_BASE), future BE endpoints list
+11.3 Open GitHub issue template for “Replace dummy menu with API”
+
+
+
+
+Visual/UX notes
+Home – full-bleed hero, hotel logo, room #, two glass-morphism buttons.
+
+Menu – sticky category tabs (horizontal scroll), each dish card shows image, name, ₹, cook-time badge, “+ / –” chip.
+
+Item modal – bottom sheet (Framer slide-up) with carousel, allergens, calories, notes textarea, add-to-cart.
+
+Cart – slide-in panel (right), list, subtotal, Confirm Order CTA.
+
+Order tracker – stepper (Placed → Cooking → On the way → Delivered) with live ticks via SSE.
+
