@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { CheckCircle2, PackageSearch, ChefHat, Truck, PartyPopper } from 'lucide-react';
+import OrderStatusStepper from '@/components/orders/order-status-stepper';
 
 // Define a type for the SSE event data
 interface OrderStatusEvent {
@@ -12,6 +13,8 @@ interface OrderStatusEvent {
   status: string;
   timestamp: string;
 }
+
+const ORDER_STAGES = ["Placed", "Cooking", "On the way", "Delivered"];
 
 const statusIcons: { [key: string]: React.ElementType } = {
   "Placed": PackageSearch,
@@ -34,7 +37,7 @@ export default function OrderStatusPage() {
   const orderId = params.id as string;
   const roomId = searchParams.get('r');
 
-  const [currentStatus, setCurrentStatus] = useState<string>("Placed");
+  const [currentStatus, setCurrentStatus] = useState<string>(ORDER_STAGES[0]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,9 +49,9 @@ export default function OrderStatusPage() {
     eventSource.onmessage = (event) => {
       try {
         const data: OrderStatusEvent = JSON.parse(event.data);
-        if (data.orderId === orderId) {
+        if (data.orderId === orderId && ORDER_STAGES.includes(data.status)) {
           setCurrentStatus(data.status);
-          if (data.status === "Delivered") {
+          if (data.status === ORDER_STAGES[ORDER_STAGES.length - 1]) {
             eventSource.close();
           }
         }
@@ -73,26 +76,30 @@ export default function OrderStatusPage() {
   const statusMessage = statusMessages[currentStatus] || "Your order is being processed.";
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center text-center p-6">
-      <CurrentIcon className={`w-20 h-20 mb-6 ${currentStatus === 'Delivered' ? 'text-green-500' : 'text-brand-primary'}`} />
+    <div className="min-h-[calc(100vh-150px)] flex flex-col items-center justify-start text-center py-8 px-4 sm:px-6">
+      <div className="w-full max-w-2xl mb-8">
+        <OrderStatusStepper stages={ORDER_STAGES} currentStage={currentStatus} />
+      </div>
+
+      <CurrentIcon className={`w-24 h-24 mb-5 ${currentStatus === 'Delivered' ? 'text-green-500' : 'text-brand-primary'}`} />
       
-      <h1 className="text-3xl font-bold mb-3">Order Status: {currentStatus}</h1>
+      <h1 className="text-4xl font-bold mb-2">{currentStatus === 'Delivered' ? 'Order Delivered!' : 'Tracking Your Order'}</h1>
       <p className="text-lg text-muted-foreground mb-4">{statusMessage}</p>
       
-      <div className="bg-muted/50 p-4 rounded-lg shadow-sm mb-6 w-full max-w-md">
-        <p className="text-md text-foreground mb-1">Order ID: <span className="font-semibold text-brand-primary">{orderId}</span></p>
+      <div className="bg-card border p-4 rounded-lg shadow-sm mb-6 w-full max-w-md">
+        <p className="text-md text-card-foreground mb-1">Order ID: <span className="font-semibold text-brand-primary">{orderId}</span></p>
         {roomId && (
-          <p className="text-md text-foreground">Room Number: <span className="font-semibold text-brand-primary">{roomId}</span></p>
+          <p className="text-md text-card-foreground">Room Number: <span className="font-semibold text-brand-primary">{roomId}</span></p>
         )}
       </div>
 
       {error && (
-        <p className="text-red-500 mb-4">Error: {error}</p>
+        <p className="text-destructive mb-4 text-sm">Error: {error}</p>
       )}
       
-      <div className="flex space-x-4">
+      <div className="flex space-x-4 mt-4">
         <Link href={roomId ? `/menu?r=${roomId}` : "/menu"}>
-          <Button variant="outline">Back to Menu</Button>
+          <Button variant="outline" size="lg">Back to Menu</Button>
         </Link>
       </div>
     </div>
