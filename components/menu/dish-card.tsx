@@ -68,7 +68,7 @@ export default function DishCard({ dish }: DishCardProps) {
       >
         <div className="relative w-full h-48">
           <Image
-            src={dish.imageUrl || "/images/placeholder-dish.jpg"}
+            src={dish.imageUrl || "/images/placeholder-dish.svg"}
             alt={dish.name}
             layout="fill"
             objectFit="cover"

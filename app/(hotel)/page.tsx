@@ -16,9 +16,7 @@ export default function HomePage() {
         aria-hidden="true"
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "linear-gradient(to bottom right, var(--colors-brand-primary), #002A4D, var(--colors-brand-accent))",
-          // Using Tailwind arbitrary values with theme() might be better for direct color names if CSS variables aren't picked up here:
-          // backgroundImage: "linear-gradient(to bottom right, theme('colors.brand-primary'), #002A4D, theme('colors.brand-accent'))",
+          backgroundImage: "linear-gradient(to bottom right, theme('colors.brand-primary'), #002A4D, theme('colors.brand-accent'))",
           opacity: 0.9, // Adjust opacity as needed
         }}
       />

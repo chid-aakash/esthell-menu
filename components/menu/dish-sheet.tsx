@@ -34,7 +34,7 @@ export default function DishSheet({ dish, isOpen, onOpenChange }: DishSheetProps
 
   // Calculate dishImages and validDishImages safely, even if dish is null initially
   const dishImages = dish?.images?.length ? dish.images : (dish?.imageUrl ? [dish.imageUrl] : []);
-  const validDishImages = dishImages.map(img => img || "/images/placeholder-dish.jpg");
+  const validDishImages = dishImages.map(img => img || "/images/placeholder-dish.svg");
 
   useLayoutEffect(() => {
     // This effect should only run if the sheet is open and the refs are available

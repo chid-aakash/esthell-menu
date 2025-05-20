@@ -102,7 +102,7 @@ export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
                       <div key={item.id} className="flex items-start space-x-4 py-4 border-b last:border-b-0">
                         <div className="relative w-20 h-20 rounded-md overflow-hidden flex-shrink-0">
                           <Image
-                            src={item.imageUrl || "/images/placeholder-dish.jpg"}
+                            src={item.imageUrl || "/images/placeholder-dish.svg"}
                             alt={item.name}
                             layout="fill"
                             objectFit="cover"
