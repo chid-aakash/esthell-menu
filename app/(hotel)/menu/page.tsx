@@ -1,7 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // Define interfaces for the menu data structure
 interface Dish {
@@ -37,6 +40,27 @@ export default function MenuPage() {
     queryFn: fetchMenu,
   });
 
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  useEffect(() => {
+    // Select the first category by default if menuData is available
+    if (menuData?.categories && menuData.categories.length > 0 && !selectedCategoryId) {
+      setSelectedCategoryId(menuData.categories[0].id);
+    }
+  }, [menuData, selectedCategoryId]);
+
+  useEffect(() => {
+    // Scroll to active tab
+    if (selectedCategoryId && tabRefs.current[selectedCategoryId]) {
+      tabRefs.current[selectedCategoryId]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center", // Try to center the tab
+      });
+    }
+  }, [selectedCategoryId]);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-150px)]">
@@ -62,14 +86,57 @@ export default function MenuPage() {
     );
   }
 
-  // For now, just display the raw data to verify fetching
-  // Later steps will render this properly with tabs and dish cards
+  const currentCategory = menuData.categories.find(c => c.id === selectedCategoryId);
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold my-6">Menu</h1>
-      <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto">
-        {JSON.stringify(menuData, null, 2)}
-      </pre>
+    <div className="py-6">
+      <h1 className="text-3xl font-bold mb-6 px-4 sm:px-6">Menu</h1>
+      
+      <ScrollArea className="w-full whitespace-nowrap border-b">
+        <div className="flex space-x-1 px-4 sm:px-6 pb-3">
+          {menuData.categories.map((category) => (
+            <Button
+              key={category.id}
+              ref={(el) => { tabRefs.current[category.id] = el; }}
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "h-auto py-2 px-4 transition-all duration-150 ease-in-out",
+                selectedCategoryId === category.id
+                  ? "bg-brand-accent text-brand-accent-foreground shadow-sm scale-105"
+                  : "text-muted-foreground hover:bg-gray-100 dark:hover:bg-gray-800"
+              )}
+              onClick={() => setSelectedCategoryId(category.id)}
+            >
+              {category.name}
+            </Button>
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" className="h-2" />
+      </ScrollArea>
+
+      <div className="mt-6 px-4 sm:px-6">
+        {currentCategory ? (
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">{currentCategory.name}</h2>
+            <p className="text-muted-foreground">
+              Displaying dishes for {currentCategory.name}. 
+              (DishCard rendering will be implemented in the next step)
+            </p>
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {currentCategory.dishes.map(dish => (
+                    <div key={dish.id} className="border p-4 rounded-lg shadow">
+                        <h3 className="text-lg font-medium">{dish.name}</h3>
+                        <p className="text-sm text-gray-500">{dish.description}</p>
+                        <p className="text-brand-primary font-semibold mt-2">₹{dish.price}</p>
+                    </div>
+                ))}
+            </div>
+          </div>
+        ) : (
+          <p>Select a category to see the dishes.</p>
+        )}
+      </div>
     </div>
   );
 } 
