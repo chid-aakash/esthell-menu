@@ -7,7 +7,7 @@ alwaysApply: true
 
 **Objective**: Develop a progressive web application for Esthell Hotel guests to browse the menu, place orders, and track them in real-time.
 
-**Current Phase**: Dish Modal (Step 4)
+**Current Phase**: Styling & animation pass (Step 9)
 
 **Completed Steps**:
 - **Step 0: Project Bootstrap**
@@ -30,6 +30,22 @@ alwaysApply: true
 - **Step 4: Dish modal (`components/menu/dish-sheet.tsx`)**
     - 4.1: Created `<DishSheet>` using shadcn `<Sheet>` (position="bottom"), triggered from `<DishCard>`. Centralized menu types in `types/menu.ts`.
     - 4.2: Implemented `DishSheet` content: image carousel (Framer Motion `drag="x"`), description, cook-time chip (`components/ui/chip.tsx`), notes textarea (`components/ui/textarea.tsx`), and "Add to Cart" button. Added `public/images/placeholder-dish.jpg`.
+- **Step 5: Cart & checkout**
+    - 5.1: `<CartDrawer>` (`components/cart/cart-drawer.tsx`) toggled from `ShoppingCart` icon in `<Header>`. Badge on icon shows item count from `CartContext`.
+    - 5.2: `CartContext` (`components/providers/cart-provider.tsx`) implemented with `addToCart`, `removeFromCart`, `updateQuantity`, `getItemQuantity`, `getCartTotal`, and `clearCart`. `<CartDrawer>` displays items, allows quantity adjustment/removal, shows subtotal. `<DishCard>` and `<DishSheet>` connected to `CartContext`.
+    - 5.3: Mock API route `app/api/mock-order/route.ts` created. `handleConfirmOrder` in `<CartDrawer>` POSTs cart/roomId to API, with loading/error states.
+    - 5.4: On successful order, `handleConfirmOrder` calls `clearCart()` and navigates to `/orders/:id?r=ROOM_ID`. Placeholder order status page `app/(hotel)/orders/[id]/page.tsx` created.
+- **Step 6: Order Tracker**
+    - 6.1: Mock SSE API route `app/api/orders/stream/route.ts` sends periodic status updates. `app/(hotel)/orders/[id]/page.tsx` subscribes via `EventSource` and displays `currentOrderStatus`.
+    - 6.2: `<OrderStatusStepper>` component (`components/orders/order-status-stepper.tsx`) created and integrated into order status page.
+    - 6.3: `react-dom-confetti` installed. Order status page triggers confetti animation when status is "Delivered".
+- **Step 7: QR Code Handling**
+    - 7.1: `middleware.ts` created at root. Redirects from `/` to `/invalid-qr` if `r` (roomId) query param is missing. `app/(hotel)/invalid-qr/page.tsx` displays an error message.
+    - 7.2: `qrcode.react` installed. `app/dev-qr/page.tsx` created to generate and display QR codes for testing with various room IDs. `Input` component added via shadcn.
+- **Step 8: A11y & PWA polish**
+    - 8.1: Added `public/manifest.json` and placeholder icons. Linked manifest in `app/(hotel)/layout.tsx`.
+    - 8.2: `next-pwa` plugin (`@ducanh2912/next-pwa`) installed and configured in `next.config.ts` for offline caching of static assets and network-first for external requests.
+    - 8.3: Added `aria-label` attributes and keyboard navigation enhancements to various interactive elements (Header cart button, DishCard, DishSheet buttons, CartDrawer buttons).
 
 **Codebase Structure** (All paths relative to workspace root `/Users/aakashchid/workshop/esthell-menu`):
 - Next.js 15 (App Router)
@@ -41,27 +57,40 @@ alwaysApply: true
         - `app/(hotel)/layout.tsx`: Core layout for hotel-specific pages.
         - `app/(hotel)/page.tsx`: Home page.
         - `app/(hotel)/menu/page.tsx`: Menu page.
+        - `app/(hotel)/orders/[id]/page.tsx`: Order status tracking page.
+        - `app/(hotel)/invalid-qr/page.tsx`: Invalid QR code page.
+        - `app/dev-qr/page.tsx`: Developer QR code generator page.
+        - `app/api/mock-order/route.ts`: Mock API for order creation.
+        - `app/api/orders/stream/route.ts`: Mock SSE endpoint for order status.
     - `components/`: Reusable UI components.
         - `components/layout/header.tsx`: Application header.
         - `components/providers/`: Context providers (`QueryProvider`, `CartProvider`).
-        - `components/ui/`: Shadcn-ui components (Button, ScrollArea, Sheet, Textarea, Chip).
+        - `components/ui/`: Shadcn-ui components (Button, ScrollArea, Sheet, Textarea, Chip, Input).
         - `components/menu/dish-card.tsx`: Displays individual dish information.
         - `components/menu/dish-sheet.tsx`: Bottom sheet modal for dish details.
+        - `components/cart/cart-drawer.tsx`: Cart drawer component.
+        - `components/orders/order-status-stepper.tsx`: Order status stepper component.
     - `lib/`: Utility functions (alias: `@/lib`).
         - `lib/utils.ts`: Contains `cn()` utility from shadcn.
     - `public/`: Static assets.
         - `public/menu.dummy.json`: Dummy menu data.
         - `public/images/placeholder-dish.jpg`: Placeholder image for dishes.
     - `types/`: TypeScript type definitions.
-        - `types/menu.ts`: Contains `Dish`, `Category`, `MenuData` interfaces.
+        - `types/menu.ts`: Contains `Dish`, `Category`, `MenuData`, `CartItem`, `CartContextType` interfaces.
+    - `middleware.ts`: Middleware for QR code validation.
 - `pnpm` is the package manager (accessed via `npx pnpm` in the current environment).
 
 **Upcoming Tasks**:
-- **Step 5: Cart & checkout**
-    - 5.1: `<CartDrawer>` toggled from navbar icon (badge with item count).
-    - 5.2: Map items, allow qty adjust & remove.
-    - 5.3: ConfirmOrder button → POST `/api/mock-order` (local route handler).
-    - 5.4: On success push to `/orders/:id`.
+- **Step 9: Styling & animation pass**
+    - 9.1: Add subtle fade-in on page load (AnimatePresence).
+    - 9.2: Cart drawer spring transition (type:"spring", stiffness:260).
+- **Step 10: Testing & lint**
+    - 10.1: Run `pnpm dlx playwright install` → write 2 e2e tests (open menu, add item).
+    - 10.2: Fix any `eslint --fix` issues.
+- **Step 11: Deploy & hand-off**
+    - 11.1: Push to GitHub, connect to Vercel ⇒ production URL.
+    - 11.2: Write a 1-page hand-off MD: env variables (MENU_API_BASE), future BE endpoints list.
+    - 11.3: Open GitHub issue template for "Replace dummy menu with API".
 
 **Key Files & Configuration** (All paths relative to workspace root):
 - `package.json`: Project dependencies.

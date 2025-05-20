@@ -119,3 +119,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom utility to disable shadcn sheet animations when using framer-motion */
+.no-sheet-animation[data-state=open],
+.no-sheet-animation[data-state=closed] {
+  animation: none !important;
+}
