@@ -112,16 +112,18 @@ export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
                             className="h-7 w-7 text-destructive"
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             disabled={isPending}
+                            aria-label={`Decrease quantity of ${item.name}`}
                           >
                             <MinusCircle className="h-4 w-4" />
                           </Button>
-                          <span className="font-semibold w-5 text-center">{item.quantity}</span>
+                          <span className="font-semibold w-5 text-center" aria-live="polite">{item.quantity}</span>
                           <Button
                             variant="outline"
                             size="icon"
                             className="h-7 w-7 text-brand-primary"
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             disabled={isPending}
+                            aria-label={`Increase quantity of ${item.name}`}
                           >
                             <PlusCircle className="h-4 w-4" />
                           </Button>
@@ -132,6 +134,7 @@ export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
                             className="text-destructive hover:bg-destructive/10 px-2"
                             onClick={() => removeFromCart(item.id)}
                             disabled={isPending}
+                            aria-label={`Remove ${item.name} from cart`}
                         >
                             <Trash2 className="h-4 w-4 mr-1" /> Remove
                         </Button>

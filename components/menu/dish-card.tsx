@@ -56,6 +56,15 @@ export default function DishCard({ dish }: DishCardProps) {
       <div 
         className="bg-card text-card-foreground rounded-lg shadow-lg overflow-hidden flex flex-col transition-all hover:shadow-xl cursor-pointer"
         onClick={openSheet} // Open sheet on card click
+        role="button"
+        tabIndex={0}
+        aria-label={`View details for ${dish.name}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault(); // Prevent scrolling if space is pressed
+            openSheet();
+          }
+        }}
       >
         <div className="relative w-full h-48">
           <Image
@@ -80,16 +89,32 @@ export default function DishCard({ dish }: DishCardProps) {
 
           <div className="mt-auto pt-3 border-t border-border">
             {quantityInCart === 0 ? (
-              <Button onClick={handleAdd} className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-accent-foreground">
+              <Button 
+                onClick={handleAdd} 
+                className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-accent-foreground"
+                aria-label={`Add ${dish.name} to cart`}
+              >
                 Add to Cart
               </Button>
             ) : (
               <div className="flex items-center justify-between">
-                <Button onClick={handleRemove} variant="outline" size="icon" className="text-destructive hover:bg-destructive/10 border-destructive/50">
+                <Button 
+                  onClick={handleRemove} 
+                  variant="outline" 
+                  size="icon" 
+                  className="text-destructive hover:bg-destructive/10 border-destructive/50"
+                  aria-label={`Decrease quantity of ${dish.name}`}
+                >
                   <MinusCircle className="h-5 w-5" />
                 </Button>
-                <span className="text-lg font-semibold mx-3">{quantityInCart}</span>
-                <Button onClick={handleAdd} variant="outline" size="icon" className="text-brand-primary hover:bg-brand-primary/10 border-brand-primary/50">
+                <span className="text-lg font-semibold mx-3" aria-live="polite">{quantityInCart} in cart</span>
+                <Button 
+                  onClick={handleAdd} 
+                  variant="outline" 
+                  size="icon" 
+                  className="text-brand-primary hover:bg-brand-primary/10 border-brand-primary/50"
+                  aria-label={`Increase quantity of ${dish.name}`}
+                >
                   <PlusCircle className="h-5 w-5" />
                 </Button>
               </div>

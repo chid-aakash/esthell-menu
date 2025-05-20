@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-Its important that the latest code structure, function, objective, tasks and upcoming tasks to be maintained in cursorInfo.mdc. 
+Its important that the latest code structure, function, objective, tasks and upcoming tasks to be maintained in [cursorInfo.mdc](mdc:.cursor/rules/cursorInfo.mdc) 
 
 It is also advised that whenever the LLM is confused how things work it take a look at cursorInfo.mdc for ground truth. 
 
@@ -12,3 +12,5 @@ If you ever come across mismatch between reality of the codebase and what i repr
 At the end of each response, make it a point to update the cursorInfo.mdc if you have changed something that matters.
 
 cursorInfo.mdc is not a change log but a status snapshot of the project. You dont have to update that you have chagned somethign but only say that the codebase is this way and does this.
+
+make sure u use the right path for updating [cursorInfo.mdc](mdc:.cursor/rules/cursorInfo.mdc) its within .cursor/rules

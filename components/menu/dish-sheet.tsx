@@ -125,7 +125,11 @@ export default function DishSheet({ dish, isOpen, onOpenChange }: DishSheetProps
         <SheetFooter className="mt-auto p-6 border-t bg-background">
           <div className="flex w-full gap-4">
             <Button onClick={() => {onOpenChange(false); setNotes("");}} variant="outline" className="flex-1">Cancel</Button>
-            <Button onClick={handleAddToCart} className="flex-1 bg-brand-accent hover:bg-brand-accent/90 text-brand-accent-foreground">
+            <Button 
+              onClick={handleAddToCart} 
+              className="flex-1 bg-brand-accent hover:bg-brand-accent/90 text-brand-accent-foreground"
+              aria-label={`Add ${dish.name} to cart with notes`}
+            >
               Add to Cart
             </Button>
           </div>
