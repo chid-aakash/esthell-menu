@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import DishCard from "@/components/menu/dish-card";
 
 // Define interfaces for the menu data structure
 interface Dish {
@@ -119,22 +120,18 @@ export default function MenuPage() {
         {currentCategory ? (
           <div>
             <h2 className="text-2xl font-semibold mb-4">{currentCategory.name}</h2>
-            <p className="text-muted-foreground">
-              Displaying dishes for {currentCategory.name}. 
-              (DishCard rendering will be implemented in the next step)
-            </p>
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {currentCategory.dishes.map(dish => (
-                    <div key={dish.id} className="border p-4 rounded-lg shadow">
-                        <h3 className="text-lg font-medium">{dish.name}</h3>
-                        <p className="text-sm text-gray-500">{dish.description}</p>
-                        <p className="text-brand-primary font-semibold mt-2">₹{dish.price}</p>
-                    </div>
+            {currentCategory.dishes.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {currentCategory.dishes.map((dish) => (
+                  <DishCard key={dish.id} dish={dish} />
                 ))}
-            </div>
+              </div>
+            ) : (
+              <p className="text-muted-foreground">No dishes in this category yet.</p>
+            )}
           </div>
         ) : (
-          <p>Select a category to see the dishes.</p>
+          <p className="text-muted-foreground">Select a category to see the dishes.</p>
         )}
       </div>
     </div>
