@@ -6,18 +6,9 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, MinusCircle, CookingPot } from "lucide-react"; // Icons
 import type { Dish } from "@/types/menu"; // Import Dish type
 import DishSheet from "./dish-sheet"; // Import DishSheet
-// import { useCart } from "@/components/providers/cart-provider"; // Assuming CartContext is set up
+import { useCart } from "@/components/providers/cart-provider"; // Use actual useCart
 
-// Temporary placeholder for useCart until CartContext is fully implemented
-const useCart = () => ({
-  addToCart: (item: Dish & { quantity: number }) => console.log("Add to cart (temp):", item),
-  updateQuantity: (itemId: string, quantity: number) => console.log("Update quantity (temp):", itemId, quantity),
-  removeFromCart: (itemId: string) => console.log("Remove from cart (temp):", itemId),
-  getItemQuantity: (itemId: string) => {
-    console.log("getItemQuantity (temp):", itemId); // Use itemId to avoid unused var
-    return 0; 
-  },
-});
+// Removed temporary placeholder for useCart
 
 // interface Dish { // Re-defining here or importing from a shared types file later
 //   id: string;
@@ -34,28 +25,31 @@ interface DishCardProps {
 
 export default function DishCard({ dish }: DishCardProps) {
   const { addToCart, updateQuantity, removeFromCart, getItemQuantity } = useCart();
-  const quantityInCart = getItemQuantity(dish.id);
+  // const quantityInCart = getItemQuantity(dish.id); // Re-fetch for handlers and render
   const [isSheetOpen, setIsSheetOpen] = useState(false); // State for sheet
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent sheet from opening when clicking +/- buttons
-    if (quantityInCart === 0) {
+    const currentQuantity = getItemQuantity(dish.id);
+    if (currentQuantity === 0) {
       addToCart({ ...dish, quantity: 1 });
     } else {
-      updateQuantity(dish.id, quantityInCart + 1);
+      updateQuantity(dish.id, currentQuantity + 1);
     }
   };
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent sheet from opening
-    if (quantityInCart > 1) {
-      updateQuantity(dish.id, quantityInCart - 1);
-    } else if (quantityInCart === 1) {
+    const currentQuantity = getItemQuantity(dish.id);
+    if (currentQuantity > 1) {
+      updateQuantity(dish.id, currentQuantity - 1);
+    } else if (currentQuantity === 1) {
       removeFromCart(dish.id);
     }
   };
   
   const openSheet = () => setIsSheetOpen(true);
+  const quantityInCart = getItemQuantity(dish.id); // For rendering the UI
 
   return (
     <>

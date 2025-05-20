@@ -17,6 +17,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { CookingPot, MessageSquarePlus, X } from "lucide-react";
 import type { Dish } from "@/types/menu";
+import { useCart } from "@/components/providers/cart-provider";
 
 interface DishSheetProps {
   dish: Dish | null;
@@ -29,6 +30,7 @@ export default function DishSheet({ dish, isOpen, onOpenChange }: DishSheetProps
   const [dragConstraintLeft, setDragConstraintLeft] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const { addToCart } = useCart();
 
   // Calculate dishImages and validDishImages safely, even if dish is null initially
   const dishImages = dish?.images?.length ? dish.images : (dish?.imageUrl ? [dish.imageUrl] : []);
@@ -59,7 +61,7 @@ export default function DishSheet({ dish, isOpen, onOpenChange }: DishSheetProps
   }
 
   const handleAddToCart = () => {
-    console.log("Adding to cart (from sheet):", { ...dish, notes });
+    addToCart({ ...dish, notes });
     onOpenChange(false);
     setNotes("");
   };

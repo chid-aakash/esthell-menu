@@ -12,10 +12,11 @@ export interface CartItem extends Dish {
 // Define the context type
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (item: CartItem) => void;
+  addToCart: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void; // Allow adding with or without initial quantity
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   getItemQuantity: (itemId: string) => number;
+  getCartTotal: () => number;
   // Add other cart actions here: clearCart, etc.
 }
 
@@ -34,25 +35,48 @@ export default function CartProvider({
 }: {
   children: ReactNode;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Dummy functions, to be implemented in Step 5.2
-  const addToCart = (item: CartItem) => {
-    console.log("addToCart (dummy)", item);
-    // Example: setCartItems(prevItems => [...prevItems, item]);
+  const addToCart = (itemToAdd: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
+    setCartItems(prevItems => {
+      const existingItemIndex = prevItems.findIndex(item => item.id === itemToAdd.id);
+      if (existingItemIndex > -1) {
+        const updatedItems = [...prevItems];
+        const newQuantity = updatedItems[existingItemIndex].quantity + (itemToAdd.quantity || 1);
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          quantity: newQuantity,
+          notes: itemToAdd.notes || updatedItems[existingItemIndex].notes, // Update notes if provided
+        };
+        return updatedItems;
+      } else {
+        return [...prevItems, { ...itemToAdd, quantity: itemToAdd.quantity || 1 }];
+      }
+    });
   };
+
   const removeFromCart = (itemId: string) => {
-    console.log("removeFromCart (dummy)", itemId);
-    // Example: setCartItems(prevItems => prevItems.filter(i => i.id !== itemId));
+    setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
   };
-  const updateQuantity = (itemId: string, quantity: number) => {
-    console.log("updateQuantity (dummy)", itemId, quantity);
-    // Example: setCartItems(prevItems => prevItems.map(i => i.id === itemId ? {...i, quantity} : i));
+
+  const updateQuantity = (itemId: string, newQuantity: number) => {
+    setCartItems(prevItems => {
+      if (newQuantity <= 0) {
+        return prevItems.filter(item => item.id !== itemId);
+      }
+      return prevItems.map(item =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      );
+    });
   };
+
   const getItemQuantity = (itemId: string) => {
     const item = cartItems.find(i => i.id === itemId);
     return item ? item.quantity : 0;
+  };
+
+  const getCartTotal = () => {
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   const value = {
@@ -61,6 +85,7 @@ export default function CartProvider({
     removeFromCart,
     updateQuantity,
     getItemQuantity,
+    getCartTotal,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
