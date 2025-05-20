@@ -9,12 +9,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import React from "react";
+import React, { useState, useTransition } from "react";
 import { useCart } from "@/components/providers/cart-provider";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { MinusCircle, PlusCircle, Trash2, ShoppingBag } from "lucide-react";
+import { MinusCircle, PlusCircle, Trash2, ShoppingBag, Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useSearchParams } from "next/navigation";
 
 interface CartDrawerProps {
   children: React.ReactNode;
@@ -25,6 +26,40 @@ interface CartDrawerProps {
 export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
   const total = getCartTotal();
+  const searchParams = useSearchParams();
+
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  const roomId = searchParams.get("r");
+
+  const handleConfirmOrder = async () => {
+    setError(null);
+    startTransition(async () => {
+      try {
+        const response = await fetch("/api/mock-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ items: cartItems, roomId }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to place order.");
+        }
+
+        console.log("Order placed successfully:", result.orderId);
+        onOpenChange(false);
+
+      } catch (err) {
+        console.error("Order confirmation error:", err);
+        setError((err as Error).message);
+      }
+    });
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -74,6 +109,7 @@ export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
                             size="icon"
                             className="h-7 w-7 text-destructive"
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            disabled={isPending}
                           >
                             <MinusCircle className="h-4 w-4" />
                           </Button>
@@ -83,6 +119,7 @@ export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
                             size="icon"
                             className="h-7 w-7 text-brand-primary"
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            disabled={isPending}
                           >
                             <PlusCircle className="h-4 w-4" />
                           </Button>
@@ -92,6 +129,7 @@ export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
                             size="sm"
                             className="text-destructive hover:bg-destructive/10 px-2"
                             onClick={() => removeFromCart(item.id)}
+                            disabled={isPending}
                         >
                             <Trash2 className="h-4 w-4 mr-1" /> Remove
                         </Button>
@@ -107,8 +145,14 @@ export function CartDrawer({ children, open, onOpenChange }: CartDrawerProps) {
                         <span>Subtotal</span>
                         <span>₹{total.toFixed(2)}</span>
                     </div>
-                    <Button className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-accent-foreground text-lg py-6">
-                        Confirm Order
+                    {error && <p className="text-sm text-destructive text-center">Error: {error}</p>}
+                    <Button 
+                        className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-accent-foreground text-lg py-6"
+                        onClick={handleConfirmOrder}
+                        disabled={isPending || cartItems.length === 0}
+                    >
+                        {isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
+                        {isPending ? "Placing Order..." : "Confirm Order"}
                     </Button>
                 </div>
             </SheetFooter>
