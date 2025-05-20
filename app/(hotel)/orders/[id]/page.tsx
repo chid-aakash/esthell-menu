@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { CheckCircle2, PackageSearch, ChefHat, Truck, PartyPopper } from 'lucide-react';
 import OrderStatusStepper from '@/components/orders/order-status-stepper';
+import Confetti from 'react-dom-confetti';
 
 // Define a type for the SSE event data
 interface OrderStatusEvent {
@@ -39,6 +40,7 @@ export default function OrderStatusPage() {
 
   const [currentStatus, setCurrentStatus] = useState<string>(ORDER_STAGES[0]);
   const [error, setError] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (!orderId) return;
@@ -51,8 +53,9 @@ export default function OrderStatusPage() {
         const data: OrderStatusEvent = JSON.parse(event.data);
         if (data.orderId === orderId && ORDER_STAGES.includes(data.status)) {
           setCurrentStatus(data.status);
-          if (data.status === ORDER_STAGES[ORDER_STAGES.length - 1]) {
-            eventSource.close();
+          if (data.status === "Delivered") {
+            setShowConfetti(true);
+            setTimeout(() => eventSource.close(), 100);
           }
         }
       } catch (e) {
@@ -75,8 +78,19 @@ export default function OrderStatusPage() {
   const CurrentIcon = statusIcons[currentStatus] || CheckCircle2;
   const statusMessage = statusMessages[currentStatus] || "Your order is being processed.";
 
+  const confettiConfig = {
+    angle: 90,
+    spread: 180,
+    startVelocity: 30,
+    elementCount: 100,
+    decay: 0.95,
+  };
+
   return (
-    <div className="min-h-[calc(100vh-150px)] flex flex-col items-center justify-start text-center py-8 px-4 sm:px-6">
+    <div className="min-h-[calc(100vh-150px)] flex flex-col items-center justify-start text-center py-8 px-4 sm:px-6 relative">
+      <div style={{ position: 'absolute', top: '50%', left: '50%', zIndex: 1000 }}>
+        <Confetti active={showConfetti} config={confettiConfig} />
+      </div>
       <div className="w-full max-w-2xl mb-8">
         <OrderStatusStepper stages={ORDER_STAGES} currentStage={currentStatus} />
       </div>
