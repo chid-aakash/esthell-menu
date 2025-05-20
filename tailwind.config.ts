@@ -19,6 +19,10 @@ const config = {
     },
     extend: {
       colors: {
+        'brand-primary': '#003C71', // Esthell Dark Blue
+        'brand-primary-foreground': '#FFFFFF', // White text on dark blue
+        'brand-accent': '#FFD34E',  // Esthell Gold
+        'brand-accent-foreground': '#003C71', // Dark blue text on gold
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -10,11 +10,11 @@ export default function Header() {
   const roomId = searchParams.get("r");
 
   return (
-    <header className="bg-brand-primary text-brand-secondary p-4 flex justify-between items-center shadow-md">
+    <header className="bg-brand-primary text-brand-primary-foreground p-4 flex justify-between items-center shadow-md">
       <Link href="/" className="flex items-center space-x-2">
         {/* Placeholder for Logo */}
         {/* <Image src="/logo.png" alt="Esthell Hotel Logo" width={40} height={40} /> */}
-        <div className="bg-brand-accent text-brand-primary font-bold p-2 rounded">LOGO</div>
+        <div className="bg-brand-accent text-brand-accent-foreground font-bold p-2 rounded">LOGO</div>
         <h1 className="text-xl font-semibold">Esthell Hotel</h1>
       </Link>
       {roomId && (
