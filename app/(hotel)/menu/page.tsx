@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import DishCard from "@/components/menu/dish-card";
@@ -71,7 +70,6 @@ export default function MenuPage() {
     <div className="py-6">
       <h1 className="text-3xl font-bold mb-6 px-4 sm:px-6">Menu</h1>
       
-      <ScrollArea className="w-full whitespace-nowrap border-b sticky top-16 z-40 bg-background">
         <div className="flex space-x-1 px-4 sm:px-6 pb-3 pt-2">
           {menuData.categories.map((category) => (
             <Button
@@ -91,8 +89,7 @@ export default function MenuPage() {
             </Button>
           ))}
         </div>
-        <ScrollBar orientation="horizontal" className="h-2" />
-      </ScrollArea>
+    
 
       <div className="mt-6 px-4 sm:px-6">
         {currentCategory ? (
