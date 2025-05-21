@@ -18,7 +18,7 @@ function HeaderContent() {
   const itemCount = cartItems.length; // Calculate itemCount
 
   return (
-    <header className="bg-brand-primary text-brand-primary-foreground p-4 flex justify-between items-center shadow-md fixed top-0 left-0 right-0 z-50 w-full">
+    <header className="bg-brand-primary text-brand-primary-foreground p-4 flex justify-between items-center shadow-md h-16 w-full">
       <Link href={roomId ? `/?r=${roomId}` : "/"} className="flex items-center space-x-2">
         {/* Placeholder for Logo */}
         {/* <Image src="/logo.png" alt="Esthell Hotel Logo" width={40} height={40} /> */}

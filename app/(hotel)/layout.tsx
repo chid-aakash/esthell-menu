@@ -24,23 +24,23 @@ export default function HotelLayout({
   return (
     <QueryProvider>
       <CartProvider>
-        <Suspense fallback={<div>Loading header...</div>}>
-          <Header />
-        </Suspense>
-        <AnimatePresence mode="wait">
-          <motion.main
-            key={pathname} // Use pathname as key for transitions
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="p-4" // Apply padding here if it's for the motion container
-          >
-            {children}
-          </motion.main>
-        </AnimatePresence>
-        {/* <main className="p-4">{children}</main> original main element, padding moved to motion.main */}
-        {/* TODO: Add Footer or other global elements if needed */}
+        <div className="flex flex-col min-h-screen bg-background"> {/* Outer wrapper */}
+          <Suspense fallback={<div className="h-16 bg-brand-primary flex items-center justify-center text-brand-primary-foreground">Loading Header...</div>}>
+            <Header /> {/* Sticky, z-50 */}
+          </Suspense>
+          <AnimatePresence mode="wait">
+            <motion.main
+              key={pathname}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex-grow overflow-y-auto" // flex-grow with internal scrolling
+            >
+              {children}
+            </motion.main>
+          </AnimatePresence>
+        </div>
       </CartProvider>
     </QueryProvider>
   );
