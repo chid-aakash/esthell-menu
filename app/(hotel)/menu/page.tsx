@@ -71,8 +71,8 @@ export default function MenuPage() {
     <div className="py-6">
       <h1 className="text-3xl font-bold mb-6 px-4 sm:px-6">Menu</h1>
       
-      <ScrollArea className="w-full whitespace-nowrap border-b">
-        <div className="flex space-x-1 px-4 sm:px-6 pb-3">
+      <ScrollArea className="w-full whitespace-nowrap border-b sticky top-16 z-40 bg-background">
+        <div className="flex space-x-1 px-4 sm:px-6 pb-3 pt-2">
           {menuData.categories.map((category) => (
             <Button
               key={category.id}
