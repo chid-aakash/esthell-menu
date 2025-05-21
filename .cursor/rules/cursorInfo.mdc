@@ -1,13 +1,13 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 ## Project Status: Esthell Menu App
 
 **Objective**: Develop a progressive web application for Esthell Hotel guests to browse the menu, place orders, and track them in real-time.
 
-**Current Phase**: Styling & animation pass (Step 9)
+**Current Phase**: Styling & Animation Refinement (Post Step 9, addressing layout issues)
 
 **Completed Steps**:
 - **Step 0: Project Bootstrap**
@@ -17,15 +17,20 @@ alwaysApply: true
     - 0.4: Absolute imports (`@/*`) configured in `tsconfig.json`.
 - **Step 1: Core Layout**
     - 1.1: Created `app/(hotel)/layout.tsx` with `<QueryProvider>` & `<CartProvider>`.
-    - 1.2: Added `<Header>` component (`components/layout/header.tsx`) with logo placeholder and dynamic `roomId` from `searchParams.r` (using `useSearchParams` and `<Suspense>`).
+    - 1.2: Added `<Header>` component (`components/layout/header.tsx`) with logo placeholder and dynamic `roomId` from `searchParams.r` (using `useSearchParams` and `<Suspense>`). **Header is now a regular (non-sticky) element that scrolls with the page, eliminating previous overlap issues.**
     - 1.3: Defined global Tailwind theme colors in `tailwind.config.ts`: `brand-primary` (#003C71), `brand-accent` (#FFD34E), and their foregrounds. Header styled with these colors.
 - **Step 2: Home page (`app/(hotel)/page.tsx`)**
-    - 2.1: Full-screen hero div with background gradient.
-    - 2.2: Two `<Button>` components side-by-side: "Menu" → `/menu`, "Room Service" (disabled).
-    - 2.3: Animated buttons with Framer's `whileHover` scale.
+    - 2.1: Displays a full-screen hero section with an animated dual-gradient background (radial + conic with a slow drift).
+    - 2.2: Features a "Welcome to Esthell" heading with a gradient text effect for "Esthell".
+    - 2.3: Contains two buttons:
+        - "View Menu": Navigates to `/menu`. Styled with glass morphism, hover scale, and glow effects.
+        - "Room Service": A disabled button, styled similarly.
+    - Uses Framer Motion for entrance animations (slide-fade in for heading and buttons) and micro-interactions on buttons (hover scale, tap press-down).
+    - Layout is responsive, using `h-[calc(100dvh-4rem)]` to adapt to mobile browser chrome.
+    - Semantic HTML (`<main>`, `<h1>`) is used for accessibility.
 - **Step 3: Menu flow (`app/(hotel)/menu/page.tsx`)**
     - 3.1: Fetched menu via React-Query from `/menu.dummy.json`.
-    - 3.2: Rendered horizontal category tabs (`<ScrollArea>`) with auto-scroll on click.
+    - 3.2: Rendered horizontal category tabs (`<ScrollArea>`) with auto-scroll on click. Category tabs are sticky below the header with appropriate z-indexing to prevent overlap issues.
     - 3.3: Implemented `<DishCard>` and displayed dishes in a responsive grid.
 - **Step 4: Dish modal (`components/menu/dish-sheet.tsx`)**
     - 4.1: Created `<DishSheet>` using shadcn `<Sheet>` (position="bottom"), triggered from `<DishCard>`. Centralized menu types in `types/menu.ts`.
@@ -46,6 +51,15 @@ alwaysApply: true
     - 8.1: Added `public/manifest.json` and placeholder icons. Linked manifest in `app/(hotel)/layout.tsx`.
     - 8.2: `next-pwa` plugin (`@ducanh2912/next-pwa`) installed and configured in `next.config.ts` for offline caching of static assets and network-first for external requests.
     - 8.3: Added `aria-label` attributes and keyboard navigation enhancements to various interactive elements (Header cart button, DishCard, DishSheet buttons, CartDrawer buttons).
+- **Step 9: Styling & animation pass**
+    - 9.1: Added subtle fade-in on page load using Framer Motion `AnimatePresence` and `motion.main` in `app/(hotel)/layout.tsx`.
+    - 9.2: Implemented a spring transition for the cart drawer (`components/cart/cart-drawer.tsx`) using Framer Motion, with `type:"spring", stiffness:260, damping:30`.
+    - 9.3: Hover shadow on dish cards (`components/menu/dish-card.tsx`) confirmed to be implemented with `hover:shadow-xl`.
+    - 9.4: Resolved content-overlap issue by:
+        1. Converting `<Header>` from `sticky` to normal flow (removed `sticky top-0 z-50`).
+        2. Removing `pt-16` offset from `motion.main` in `app/(hotel)/layout.tsx`.
+        3. Cleaning up unused imports to satisfy ESLint.
+      The menu and all pages now scroll cleanly without the navbar covering content.
 
 **Codebase Structure** (All paths relative to workspace root `/Users/aakashchid/workshop/esthell-menu`):
 - Next.js 15 (App Router)
@@ -81,9 +95,6 @@ alwaysApply: true
 - `pnpm` is the package manager (accessed via `npx pnpm` in the current environment).
 
 **Upcoming Tasks**:
-- **Step 9: Styling & animation pass**
-    - 9.1: Add subtle fade-in on page load (AnimatePresence).
-    - 9.2: Cart drawer spring transition (type:"spring", stiffness:260).
 - **Step 10: Testing & lint**
     - 10.1: Run `pnpm dlx playwright install` → write 2 e2e tests (open menu, add item).
     - 10.2: Fix any `eslint --fix` issues.
@@ -103,7 +114,7 @@ alwaysApply: true
 
 **Visual/UX Notes (as per roadmap)**:
 - Home: Full-bleed hero, logo, room #, glass-morphism buttons.
-- Menu: Sticky category tabs, dish cards (image, name, price, cook-time, +/- controls).
+- Menu: Sticky category tabs (horizontal scroll), each dish card shows image, name, ₹, cook-time badge, "+" / "–" chip.
 - Item Modal: Bottom sheet, image carousel, details, notes, add-to-cart.
 - Cart: Slide-in panel, item list, subtotal, confirm CTA.
 - Order Tracker: Stepper (Placed → Cooking → On the way → Delivered) with SSE updates.
@@ -111,3 +122,12 @@ alwaysApply: true
 **Potential Issues/Notes**:
 - `pnpm` is not globally available in the execution environment. Commands requiring `pnpm` need to be prefixed with `npx`.
 - `shadcn-cli` commands may fail if they try to run `pnpm` automatically; manual component creation/dependency installation might be needed.
+- The `top-16` class for sticky category tabs in `app/(hotel)/menu/page.tsx` assumes a header height of `4rem` (64px). This may need adjustment if the actual header height differs.
+
+**Recent Fixes**:
+- Sticky menu category tabs on the menu page now use `top-16` instead of `top-0`, ensuring they appear below the header and do not overlap the navbar (step 9.x).
+
+## Project Status
+
+### Core Functionality
+- **`
