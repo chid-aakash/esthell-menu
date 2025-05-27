@@ -15,7 +15,7 @@ function HeaderContent() {
   const { cartItems } = useCart(); // Get cartItems
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const itemCount = cartItems.length; // Calculate itemCount
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0); // Calculate total quantity
 
   return (
     <header className="bg-brand-primary text-brand-primary-foreground p-4 flex justify-between items-center shadow-md h-16 w-full">

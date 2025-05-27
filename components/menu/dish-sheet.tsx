@@ -33,8 +33,32 @@ export default function DishSheet({ dish, isOpen, onOpenChange }: DishSheetProps
   const { addToCart } = useCart();
 
   // Calculate dishImages and validDishImages safely, even if dish is null initially
-  const dishImages = dish?.images?.length ? dish.images : (dish?.imageUrl ? [dish.imageUrl] : []);
-  const validDishImages = dishImages.map(img => img || "/images/placeholder-dish.svg");
+  const imageBaseUrl = "https://loremflickr.com/400/300";
+  const dishKeywords = dish?.name.toLowerCase().split(" ").filter(word => word.length > 3 && !["and", "with", "the"].includes(word)).join(',');
+  const keywords = dishKeywords && dishKeywords.length > 0 ? dishKeywords : 'food,dish';
+
+  const getDynamicImageUrl = (id: string) => `${imageBaseUrl}/${keywords}/all?random=${id}`;
+
+  const dishImages = dish?.images?.length 
+    ? dish.images 
+    : (dish?.imageUrl 
+        ? [dish.imageUrl] 
+        : []); // Start with empty if no images/imageUrl
+  
+  let validDishImages = dishImages.map((img, idx) => 
+    img === "/images/placeholder-dish.jpg" || !img 
+    ? getDynamicImageUrl(`${dish?.id}_${idx}`) 
+    : img
+  );
+
+  // If, after attempting to use dynamic URLs, the array is still empty (e.g. dish has no imageUrl or images array)
+  // then provide a single default dynamic image.
+  if (validDishImages.length === 0 && dish) {
+    validDishImages = [getDynamicImageUrl(dish.id)];
+  }
+  if (validDishImages.length === 0 && !dish) { // Fallback if dish is null
+    validDishImages = ["/images/placeholder-dish.svg"];
+  }
 
   useLayoutEffect(() => {
     // This effect should only run if the sheet is open and the refs are available
@@ -80,12 +104,12 @@ export default function DishSheet({ dish, isOpen, onOpenChange }: DishSheetProps
             >
               {validDishImages.map((imgUrl, index) => (
                 <motion.div key={index} className="relative min-w-full h-full">
-                  <Image src={imgUrl} alt={`${dish.name} image ${index + 1}`} layout="fill" objectFit="cover" />
+                  <Image src={imgUrl} alt={`${dish.name} image ${index + 1}`} layout="fill" objectFit="cover" unoptimized={true} />
                 </motion.div>
               ))}
             </motion.div>
           ) : (
-            <Image src={validDishImages[0]} alt={dish.name} layout="fill" objectFit="cover" />
+            <Image src={validDishImages[0] || "/images/placeholder-dish.svg"} alt={dish?.name || 'Dish image'} layout="fill" objectFit="cover" unoptimized={true} />
           )}
            <SheetClose className="absolute right-3 top-3 z-10 bg-background/70 p-1.5 rounded-full backdrop-blur-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
               <X className="h-5 w-5 text-foreground/80" />

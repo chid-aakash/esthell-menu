@@ -51,6 +51,16 @@ export default function DishCard({ dish }: DishCardProps) {
   const openSheet = () => setIsSheetOpen(true);
   const quantityInCart = getItemQuantity(dish.id); // For rendering the UI
 
+  const imageBaseUrl = "https://loremflickr.com/400/300";
+  // Generate a more specific keyword if possible, otherwise general food
+  const dishKeywords = dish.name.toLowerCase().split(" ").filter(word => word.length > 3 && !["and", "with", "the"].includes(word)).join(',');
+  const keywords = dishKeywords.length > 0 ? dishKeywords : 'food,dish';
+  
+  const dynamicImageUrl = `${imageBaseUrl}/${keywords}/all?random=${dish.id}`;
+  const finalImageUrl = dish.imageUrl === "/images/placeholder-dish.jpg" || !dish.imageUrl 
+    ? dynamicImageUrl 
+    : dish.imageUrl;
+
   return (
     <>
       <div 
@@ -68,11 +78,12 @@ export default function DishCard({ dish }: DishCardProps) {
       >
         <div className="relative w-full h-48">
           <Image
-            src={dish.imageUrl || "/images/placeholder-dish.svg"}
+            src={finalImageUrl}
             alt={dish.name}
             layout="fill"
             objectFit="cover"
             className="transition-transform duration-300 ease-in-out group-hover:scale-105" // group-hover if parent is group
+            unoptimized={true} // Added for local SVGs
           />
         </div>
         <div className="p-4 flex flex-col flex-grow">

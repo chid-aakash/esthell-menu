@@ -5,26 +5,20 @@
       "name": "Starters",
       "dishes": [
         {
-          "id": "dish_tomato_soup",
+          "id": "dish_soup",
           "name": "Tomato Soup",
           "description": "Classic creamy tomato soup.",
           "price": 150,
           "cookTimeMinutes": 15,
-          "imageUrl": "/images/placeholder-dish.svg",
-          "category": "Starters",
-          "tags": ["vegetarian", "soup"],
-          "allergenInfo": "Contains dairy."
+          "imageUrl": "/images/placeholder-dish.jpg"
         },
         {
           "id": "dish_veg_spring_roll",
           "name": "Veg Spring Roll",
           "description": "Crispy fried rolls with vegetable filling.",
-          "price": 220,
+          "price": 180,
           "cookTimeMinutes": 20,
-          "imageUrl": "/images/placeholder-dish.svg",
-          "category": "Starters",
-          "tags": ["vegetarian", "appetizer"],
-          "allergenInfo": "Contains gluten."
+          "imageUrl": "/images/placeholder-dish.jpg"
         }
       ]
     },
@@ -33,26 +27,20 @@
       "name": "Main Course",
       "dishes": [
         {
-          "id": "dish_chicken_biryani",
-          "name": "Chicken Biryani",
-          "description": "Aromatic rice dish with tender chicken.",
-          "price": 350,
-          "cookTimeMinutes": 45,
-          "imageUrl": "/images/placeholder-dish.svg",
-          "category": "Main Course",
-          "tags": ["non-vegetarian", "rice"],
-          "allergenInfo": "Contains dairy."
-        },
-        {
           "id": "dish_paneer_butter_masala",
           "name": "Paneer Butter Masala",
-          "description": "Rich and creamy paneer curry.",
-          "price": 300,
+          "description": "Rich and creamy dish of paneer in a tomato, butter and cashew sauce.",
+          "price": 350,
           "cookTimeMinutes": 30,
-          "imageUrl": "/images/placeholder-dish.svg",
-          "category": "Main Course",
-          "tags": ["vegetarian", "curry"],
-          "allergenInfo": "Contains dairy, nuts."
+          "imageUrl": "/images/placeholder-dish.jpg"
+        },
+        {
+          "id": "dish_dal_makhani",
+          "name": "Dal Makhani",
+          "description": "Creamy and buttery lentil dish.",
+          "price": 300,
+          "cookTimeMinutes": 35,
+          "imageUrl": "/images/placeholder-dish.jpg"
         }
       ]
     },
@@ -63,21 +51,10 @@
         {
           "id": "dish_gulab_jamun",
           "name": "Gulab Jamun",
-          "description": "Soft berry-sized balls made of milk solids, fried and soaked in sugar syrup.",
+          "description": "Soft delicious berry sized balls made with milk solids, flour & a leavening agent.",
           "price": 120,
           "cookTimeMinutes": 10,
-          "imageUrl": "/images/placeholder-dish.svg"
-        },
-        {
-          "id": "dish_chocolate_lava_cake",
-          "name": "Chocolate Lava Cake",
-          "description": "Warm chocolate cake with a gooey center.",
-          "price": 180,
-          "cookTimeMinutes": 20,
-          "imageUrl": "/images/placeholder-dish.svg",
-          "category": "Desserts",
-          "tags": ["vegetarian", "dessert"],
-          "allergenInfo": "Contains dairy, gluten, egg."
+          "imageUrl": "/images/placeholder-dish.jpg"
         }
       ]
     }

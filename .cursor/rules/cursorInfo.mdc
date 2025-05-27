@@ -7,7 +7,7 @@ alwaysApply: false
 
 **Objective**: Develop a progressive web application for Esthell Hotel guests to browse the menu, place orders, and track them in real-time.
 
-**Current Phase**: Styling & Animation Refinement (Post Step 9, addressing layout issues)
+**Current Phase**: UI Refinements & Minor Fixes (Post Step 9)
 
 **Completed Steps**:
 - **Step 0: Project Bootstrap**
@@ -55,11 +55,15 @@ alwaysApply: false
     - 9.1: Added subtle fade-in on page load using Framer Motion `AnimatePresence` and `motion.main` in `app/(hotel)/layout.tsx`.
     - 9.2: Implemented a spring transition for the cart drawer (`components/cart/cart-drawer.tsx`) using Framer Motion, with `type:"spring", stiffness:260, damping:30`.
     - 9.3: Hover shadow on dish cards (`components/menu/dish-card.tsx`) confirmed to be implemented with `hover:shadow-xl`.
-    - 9.4: Resolved content-overlap issue by:
-        1. Converting `<Header>` from `sticky` to normal flow (removed `sticky top-0 z-50`).
-        2. Removing `pt-16` offset from `motion.main` in `app/(hotel)/layout.tsx`.
-        3. Cleaning up unused imports to satisfy ESLint.
-      The menu and all pages now scroll cleanly without the navbar covering content.
+    - 9.4: Resolved content-overlap issue by adjusting Header and main content layout.
+- **Recent UI/UX Enhancements & Fixes**:
+    - **Cart Drawer Appearance**: Ensured `CartDrawer` (`components/cart/cart-drawer.tsx`) has an explicit `bg-background` for its `MotionSheetContent` to prevent rendering issues (e.g., appearing "empty black").
+    - **Cart Item Count**: Modified `Header` component (`components/layout/header.tsx`) to display the total quantity of all items in the cart badge, not just the count of unique items.
+    - **Dynamic Placeholder Images**: Updated `DishCard.tsx` and `DishSheet.tsx` to use dynamic image URLs from `loremflickr.com` (with keywords based on dish name or generic terms like 'food,dish') when the `imageUrl` in `menu.dummy.json` is the default placeholder or missing. This provides more visual variety for placeholders.
+    - **Theme Coloring**: Adjusted the light theme in `app/globals.css` to use a slightly off-white background (`--background: oklch(0.985 0 0);`) instead of pure white, to make the UI less stark. Card backgrounds (`--card`) remain white (`oklch(1 0 0);`) for contrast.
+    - **Cart Animation Fix**: Resolved an intermittent issue where the `CartDrawer` would sometimes show a "full black screen". 
+        - Initial attempt: Applied the `.no-sheet-animation` utility class to `MotionSheetContent`.
+        - **Further Fix (Issue Persisted)**: To ensure stability, all Framer Motion animations were removed from `components/cart/cart-drawer.tsx`. The cart now uses the standard `ShadcnSheetContent` directly with the `.no-sheet-animation` class to disable default `shadcn/ui` animations. This results in an instant open/close behavior for the cart, prioritizing reliability over animation until the root cause of animation conflicts is fully understood or a simpler animation is implemented.
 
 **Codebase Structure** (All paths relative to workspace root `/Users/aakashchid/workshop/esthell-menu`):
 - Next.js 15 (App Router)
@@ -88,7 +92,8 @@ alwaysApply: false
         - `lib/utils.ts`: Contains `cn()` utility from shadcn.
     - `public/`: Static assets.
         - `public/menu.dummy.json`: Dummy menu data.
-        - `public/images/placeholder-dish.jpg`: Placeholder image for dishes.
+        - `public/images/placeholder-dish.jpg`: Default placeholder image for dishes.
+        - `public/images/placeholder-dish.svg`: Fallback SVG placeholder.
     - `types/`: TypeScript type definitions.
         - `types/menu.ts`: Contains `Dish`, `Category`, `MenuData`, `CartItem`, `CartContextType` interfaces.
     - `middleware.ts`: Middleware for QR code validation.
@@ -125,7 +130,7 @@ alwaysApply: false
 - The `top-16` class for sticky category tabs in `app/(hotel)/menu/page.tsx` assumes a header height of `4rem` (64px). This may need adjustment if the actual header height differs.
 
 **Recent Fixes**:
-- Sticky menu category tabs on the menu page now use `top-16` instead of `top-0`, ensuring they appear below the header and do not overlap the navbar (step 9.x).
+- (Covered in "Recent UI/UX Enhancements & Fixes" above)
 
 ## Project Status
 
